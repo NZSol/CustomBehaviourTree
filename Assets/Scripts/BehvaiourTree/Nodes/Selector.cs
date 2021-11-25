@@ -12,9 +12,15 @@ public class Selector : BTCoreNode
         this.nodes = nodes;
         this.curNode = curNode;
     }
+
+    public override string ToString()
+    {
+        return ($"Selector: {curNode}");
+    }
+
     public override NodeState Evaluate()
     {
-        myAI.nodePrint(curNode);
+        myAI.nodePrint(this);
         foreach (var node in nodes)
         {
             switch (node.Evaluate())

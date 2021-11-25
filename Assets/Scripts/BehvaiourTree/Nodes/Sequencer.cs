@@ -13,9 +13,14 @@ public class Sequencer : BTCoreNode
         this.curNode = curNode;
     }
 
+    public override string ToString()
+    {
+        return ($"Sequencer: {curNode}");
+    }
+
     public override NodeState Evaluate()
     {
-        myAI.nodePrint(curNode);
+        myAI.nodePrint(this);
         bool isNodeRunning = false;
         foreach(var node in nodes)
         {

@@ -119,10 +119,6 @@ public class TreeFunc : MonoBehaviour
     {
         print($"{gameObject.name} {node}");
     }
-    public void nodePrint(string node)
-    {
-        print($"{gameObject.name} {node}");
-    }
 }
 
 
