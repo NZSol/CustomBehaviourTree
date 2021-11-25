@@ -117,28 +117,11 @@ public class TreeFunc : MonoBehaviour
     }
     public void nodePrint(BTCoreNode node)
     {
-        print(gameObject.name + " " + node);
+        print($"{gameObject.name} {node}");
     }
     public void nodePrint(string node)
     {
-        print(gameObject.name + " " + node);
-    }
-    public void nodePrint(BTCoreNode node, bool invert)
-    {
-        print(gameObject.name + " " + node + " ivnerted == " + invert);
-    }
-
-    public void nodePrint(params object[] data)
-    {
-        switch (data.Length)
-        {
-            case 1:
-                print(gameObject.name + " " + data[0]);
-                break;
-            case 2:
-                print(gameObject.name + " " + data[0] + " inverted == " + data[1]);
-                break;
-        }
+        print($"{gameObject.name} {node}");
     }
 }
 

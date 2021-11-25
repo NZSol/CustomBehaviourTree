@@ -11,15 +11,19 @@ public class PlayerDetect : BTCoreNode
         this.invert = invert;
     }
 
+    public override string ToString()
+    {
+        return "PlayerDetect" + " Inverted == " + invert;
+    }
+
     public override NodeState Evaluate()
     {
-        myAI.nodePrint(this, invert);
+        myAI.nodePrint(this);
         myAI.SetColor(Color.green);
         if (!invert && myAI.CanSeePlayer())
         {
             myAI.playerFound = true;
         }
-        //myAI.playerFound = myAI.CanSeePlayer();
         return myAI.CanSeePlayer() ? NodeState.SUCCESS : NodeState.FAILURE;
     }
 }
