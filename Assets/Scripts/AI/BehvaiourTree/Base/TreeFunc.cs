@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,13 +7,22 @@ public class TreeFunc : MonoBehaviour
 {
     //----------Detections values----------\\
     [HideInInspector]
-    public float sightRange = 0f, chaseRange = 0f, audioValue = 0f, waitTimer = 0f;
+    public float sightRange = 0f, chaseRange = 0f, audioValue = 0f;
+    [HideInInspector]
+    public float waitTimerMin = 0f, waitTimerMax = 5f;
     public bool playerFound = false;
+    //------------Searching Vars------------\\
+    [HideInInspector]
+    public GameObject targetHideable = null;
+    [HideInInspector]
+    public float radius = 0;
     //------------Transform Vars------------\\
     [HideInInspector]
     public Transform[] patrolPoints = null;
     [HideInInspector]
-    public Transform player = null, target = null;
+    public Transform player = null;
+    [HideInInspector]
+    public Vector3 target = Vector3.zero;
     [HideInInspector]
     public float fovRange = 0;
     public int patrolValue = 0;
@@ -22,6 +31,8 @@ public class TreeFunc : MonoBehaviour
     public NavMeshAgent agent = null;
     [HideInInspector]
     public Material mat = null;
+    [HideInInspector]
+    public bool canCount = false;
     //-------Initialize accessory vars-------\\
     private void Awake()
     {
@@ -38,10 +49,17 @@ public class TreeFunc : MonoBehaviour
         ConstructBT();
     }
 
+    float waitTimer(float min, float max)
+    {
+        float value = Random.Range(min, max);
+        return value;
+    }
+
     void ConstructBT()
     {
         //NOTES\\
-        /*  Patrol overriding tracking
+        /*  
+         *  
          * 
          * 
          * 
@@ -49,18 +67,20 @@ public class TreeFunc : MonoBehaviour
 
 
         //----------Initializing Leaves----------\\
-        Patrol patrol = new Patrol(patrolValue, patrolPoints, agent, this, waitTimer);
+        Patrol patrol = new Patrol(patrolValue, patrolPoints, agent, this, waitTimer(waitTimerMin, waitTimerMax));
         PlayerDetect PlayerFinder = new PlayerDetect(this, false);
         Chaser chase = new Chaser(player, agent, this);
-        PlayerSite lastKnownLocation = new PlayerSite(agent, player, this);
+        PlayerSite lastKnownLocation = new PlayerSite(agent, player, target, this);
         Inverter sightsInvert = new Inverter(new PlayerDetect(this, true), this);
+        Timer waitForTimer = new Timer(waitTimer(waitTimerMin, waitTimerMax), this);
 
         //-----------Initializing Series-----------\\
         Sequencer playerInSight = new Sequencer(new List<BTCoreNode> { PlayerFinder, new Printer("PlayerFound"), chase }, this, "playerInSight");
 
 
         Sequencer PatrolSeq = new Sequencer(new List<BTCoreNode> { patrol, new Printer("PatrolSequence") }, this, "PatrolSeq");
-        Sequencer lostSightsSeq = new Sequencer(new List<BTCoreNode> { sightsInvert, new BooleanCheck(playerFound, this), lastKnownLocation }, this, "LostSightSeq");
+        Sequencer moveToLastKnownLocation = new Sequencer(new List<BTCoreNode> { lastKnownLocation, waitForTimer }, this, "MoveToLocationSequence");
+        Sequencer lostSightsSeq = new Sequencer(new List<BTCoreNode> { sightsInvert, new BooleanCheck(playerFound, this), moveToLastKnownLocation }, this, "LostSightSeq");
         Selector huntInvestigate = new Selector(new List<BTCoreNode> { playerInSight, lostSightsSeq }, this, "HuntInvestigate");
 
 
@@ -89,6 +109,7 @@ public class TreeFunc : MonoBehaviour
                 if (hit.transform.tag == "Player")
                 {
                     Debug.DrawRay(transform.position, rayDir, Color.green);
+                    target = hit.point;
                     return true;
                 }
                 else

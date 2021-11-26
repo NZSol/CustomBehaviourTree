@@ -7,10 +7,11 @@ public class PlayerSite : BTCoreNode
 {
     NavMeshAgent agent;
     Transform player;
+    Vector3 target;
     Vector3 position;
     bool targetSet = false;
 
-    public PlayerSite(NavMeshAgent agent, Transform player, TreeFunc myAI)
+    public PlayerSite(NavMeshAgent agent, Transform player, Vector3 target, TreeFunc myAI)
     {
         this.agent = agent;
         this.player = player;
@@ -19,29 +20,28 @@ public class PlayerSite : BTCoreNode
 
     public override NodeState Evaluate()
     {
+        target = myAI.target;
         myAI.nodePrint(this);
-        if (!targetSet)
-        {
-            position = player.position;
-            targetSet = true;
-            Debug.Log(position);
-        }
-        float dist = Vector3.Distance(position, agent.transform.position);
+#if UNITY_EDITOR
+        GameObject obj = GameObject.FindWithTag("Respawn");
+        obj.transform.position = target;
+#endif
+        float dist = Vector3.Distance(target, agent.transform.position);
         if (dist > 0.5f)
         {
             agent.isStopped = false;
-            agent.SetDestination(position);
+            agent.SetDestination(target);
             myAI.SetColor(Color.cyan);
             _state = NodeState.RUNNING;
-            Debug.Log("SiteRunning");
+            Debug.Log(dist);
         }
         else
         {
             agent.isStopped = true;
-            _state = NodeState.SUCCESS;
+            myAI.canCount = true;
             targetSet = false;
-            myAI.playerFound = false;
-            Debug.Log("SiteComplete");
+            _state = NodeState.SUCCESS;
+            Debug.Log("Test More");
         }
         return _state;
     }

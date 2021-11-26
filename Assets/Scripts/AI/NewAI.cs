@@ -4,18 +4,19 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class newAI : MonoBehaviour
+public class NewAI : MonoBehaviour
 {
     #region variables
     //----------Detections values----------\\
     [SerializeField] float sightRange = 0;
     [SerializeField] float chaseRange = 0;
     [SerializeField] float audioValue = 0;
-    [SerializeField] int waitTimer = 0;
+    [SerializeField] int waitTimerMin = 0, waitTimerMax = 5;
+    //----------Searching values----------\\
+    [SerializeField] float radius = 0;
     //------------Transform Vars------------\\
     [SerializeField] Transform[] patrolPoints = null;
     [SerializeField] Transform player = null;
-    [SerializeField] Transform target = null;
     [SerializeField] float fovRange = 0;
     [SerializeField] int patrolValue = 0;
     //------------Accessory Vars------------\\
@@ -43,13 +44,14 @@ public class newAI : MonoBehaviour
         tree.sightRange = sightRange;
         tree.chaseRange = chaseRange;
         tree.audioValue = audioValue;
-        tree.waitTimer = waitTimer;
+        tree.waitTimerMin = waitTimerMin;
+        tree.waitTimerMax = waitTimerMax;
         tree.fovRange = fovRange;
-        
+        //----------Searching values----------\\
+        tree.radius = radius;
         //------Location Vars------\\
         tree.patrolPoints = patrolPoints;
         tree.player = player;
-        tree.target = target;
         tree.patrolValue = patrolValue;
     }
 }
