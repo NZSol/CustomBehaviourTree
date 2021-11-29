@@ -7,6 +7,7 @@ public class FindHideables : BTCoreNode
 {
     float radius;
     NavMeshAgent agent;
+    Collider[] objects = new Collider[0];
 
     public FindHideables(float radius, TreeFunc myAI, NavMeshAgent agent)
     {
@@ -15,32 +16,46 @@ public class FindHideables : BTCoreNode
         this.agent = agent;
     }
 
-    List<Collider> locateHideables()
+    Collider[] locateHideables()
     {
-        List <Collider> hitCols = new List<Collider>();
-        foreach (var col in Physics.OverlapSphere(agent.transform.position, radius))
+        List<Collider> finalColsOut = new List<Collider>();
+        Collider[] hitcols = Physics.OverlapSphere(agent.transform.position, radius);
+        if (hitcols.Length > 0)
         {
-            if(col.tag == "hideable")
+            foreach (Collider col in hitcols)
             {
-                hitCols.Add(col);
+                if (col.tag == "Hideable")
+                {
+                    finalColsOut.Add(col);
+                }
             }
+            hitcols = finalColsOut.ToArray();
+            return hitcols;
         }
-        if (hitCols.Count != 0)
-            return hitCols;
         else
             return null;
     }
 
     public override NodeState Evaluate()
     {
-        Collider[] hide = locateHideables().ToArray();
-        if (hide.Length != 0)
-            myAI.targetHideable = hide[Random.Range(0, hide.Length - 1)].gameObject;
+        Collider[] hideables = locateHideables();
+        Debug.Log($"hideables count = {hideables.Length}");
+        if (hideables.Length != 0 && myAI.targetHideable == null)
+        {
+            myAI.targetHideable = hideables[Random.Range(0, hideables.Length - 1)].gameObject;
+            Debug.Log($"My hideable is: {myAI.targetHideable}");
+        }
 
         if (myAI.targetHideable == null)
+        {
             _state = NodeState.FAILURE;
+            Debug.Log("fail");
+        }
         else
+        {
             _state = NodeState.SUCCESS;
+            Debug.Log("success");
+        }
         return _state;
     }
 }

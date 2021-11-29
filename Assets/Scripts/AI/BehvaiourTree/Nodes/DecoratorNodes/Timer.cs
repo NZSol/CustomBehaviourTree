@@ -24,26 +24,27 @@ public class Timer : BTCoreNode
         switch (timer < waitTime)
         {
             case true:
-                Debug.Log("Case");
                 if (canCount)
                 {
-                    Debug.Log(canCount);
                     timer += Time.deltaTime;
                     myAI.SetColor(Color.black);
                     _state = NodeState.RUNNING;
+                }
+                else
+                {
+                    timer = 0;
                 }
                 break;
             case false:
                 if (myAI.playerFound)
                 {
                     myAI.playerFound = false;
+                    myAI.canCount = false;
                 }
                 timer -= waitTime;
                 _state = NodeState.SUCCESS;
                 break;
         }
-        Debug.Log(timer);
-        Debug.Log(_state);
         return _state;
     }
 }

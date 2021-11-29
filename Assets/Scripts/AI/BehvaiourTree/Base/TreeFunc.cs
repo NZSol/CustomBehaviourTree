@@ -31,7 +31,7 @@ public class TreeFunc : MonoBehaviour
     public NavMeshAgent agent = null;
     [HideInInspector]
     public Material mat = null;
-    [HideInInspector]
+    //[HideInInspector]
     public bool canCount = false;
     //-------Initialize accessory vars-------\\
     private void Awake()
@@ -58,8 +58,8 @@ public class TreeFunc : MonoBehaviour
     void ConstructBT()
     {
         //NOTES\\
-        /*  
-         *  
+        /*  Currently Skipping timer on finding AI
+         *  Not moving to location of hideable objects
          * 
          * 
          * 
@@ -68,24 +68,29 @@ public class TreeFunc : MonoBehaviour
 
         //----------Initializing Leaves----------\\
         Patrol patrol = new Patrol(patrolValue, patrolPoints, agent, this, waitTimer(waitTimerMin, waitTimerMax));
-        PlayerDetect PlayerFinder = new PlayerDetect(this, false);
+        PlayerDetect PlayerFinder = new PlayerDetect(this, false, player, agent, fovRange);
         Chaser chase = new Chaser(player, agent, this);
-        PlayerSite lastKnownLocation = new PlayerSite(agent, player, target, this);
-        Inverter sightsInvert = new Inverter(new PlayerDetect(this, true), this);
+        PlayerSite lastKnownLocation = new PlayerSite(agent, player, this, true, "Player pos");
+        PlayerSite targetHider = new PlayerSite(agent, player, this, false, "Hideable");
+        Inverter sightsInvert = new Inverter(PlayerFinder, this);
         Timer waitForTimer = new Timer(waitTimer(waitTimerMin, waitTimerMax), this);
+        FindHideables hideableObjs = new FindHideables(radius, this, agent);
 
         //-----------Initializing Series-----------\\
         Sequencer playerInSight = new Sequencer(new List<BTCoreNode> { PlayerFinder, new Printer("PlayerFound"), chase }, this, "playerInSight");
 
 
-        Sequencer PatrolSeq = new Sequencer(new List<BTCoreNode> { patrol, new Printer("PatrolSequence") }, this, "PatrolSeq");
-        Sequencer moveToLastKnownLocation = new Sequencer(new List<BTCoreNode> { lastKnownLocation, waitForTimer }, this, "MoveToLocationSequence");
+        Sequencer patrolSeq = new Sequencer(new List<BTCoreNode> { patrol, new Printer("PatrolSequence") }, this, "PatrolSeq");
+        Sequencer searchHiding = new Sequencer(new List<BTCoreNode> { hideableObjs, targetHider, waitForTimer}, this, "SearchHidingSequence");
+        Selector searchHiddenLocal = new Selector(new List<BTCoreNode> { searchHiding }, this, "SearchHidden||LocalAreas");
+        Sequencer moveToLastKnownLocation = new Sequencer(new List<BTCoreNode> { lastKnownLocation, waitForTimer, searchHiddenLocal }, this, "MoveToLocationSequence");
+
         Sequencer lostSightsSeq = new Sequencer(new List<BTCoreNode> { sightsInvert, new BooleanCheck(playerFound, this), moveToLastKnownLocation }, this, "LostSightSeq");
         Selector huntInvestigate = new Selector(new List<BTCoreNode> { playerInSight, lostSightsSeq }, this, "HuntInvestigate");
 
 
 
-        rootNode = new Selector(new List<BTCoreNode> { huntInvestigate, PatrolSeq }, this, "Root");
+        rootNode = new Selector(new List<BTCoreNode> { huntInvestigate, patrolSeq }, this, "Root");
     }
 
     private void Update()
@@ -110,6 +115,7 @@ public class TreeFunc : MonoBehaviour
                 {
                     Debug.DrawRay(transform.position, rayDir, Color.green);
                     target = hit.point;
+                    canCount = false;
                     return true;
                 }
                 else

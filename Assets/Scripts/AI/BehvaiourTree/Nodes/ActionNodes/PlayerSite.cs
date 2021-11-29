@@ -9,17 +9,38 @@ public class PlayerSite : BTCoreNode
     Transform player;
     Vector3 target;
     Vector3 position;
-    bool targetSet = false;
+    bool targetPlayer = false;
+    float range;
 
-    public PlayerSite(NavMeshAgent agent, Transform player, Vector3 target, TreeFunc myAI)
+    string nodeName;
+
+    public PlayerSite(NavMeshAgent agent, Transform player, TreeFunc myAI, bool targetPlayer, string nodeName)
     {
         this.agent = agent;
         this.player = player;
         this.myAI = myAI;
+        this.nodeName = nodeName;
+        this.targetPlayer = targetPlayer;
+    }
+
+    public override string ToString()
+    {
+        return ($"Move To Site: {nodeName}");
     }
 
     public override NodeState Evaluate()
     {
+        switch (targetPlayer)
+        {
+            case true:
+                target = myAI.target;
+                range = 0.5f;
+                break;
+            case false:
+                target = myAI.targetHideable.transform.position;
+                range = 2.5f;
+                break;
+        }
         target = myAI.target;
         myAI.nodePrint(this);
 #if UNITY_EDITOR
@@ -27,21 +48,18 @@ public class PlayerSite : BTCoreNode
         obj.transform.position = target;
 #endif
         float dist = Vector3.Distance(target, agent.transform.position);
-        if (dist > 0.5f)
+        if (dist > range)
         {
             agent.isStopped = false;
             agent.SetDestination(target);
             myAI.SetColor(Color.cyan);
             _state = NodeState.RUNNING;
-            Debug.Log(dist);
         }
         else
         {
             agent.isStopped = true;
             myAI.canCount = true;
-            targetSet = false;
             _state = NodeState.SUCCESS;
-            Debug.Log("Test More");
         }
         return _state;
     }
