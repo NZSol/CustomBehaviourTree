@@ -49,7 +49,10 @@ public class PlayerDetect : BTCoreNode
                 {
                     Debug.DrawRay(agent.transform.position, rayDir, Color.green);
                     myAI.target = hit.point;
-                    myAI.canCount = false;
+                    if (myAI.canCount)
+                    {
+                        myAI.canCount = false;
+                    }
                     return true;
                 }
                 else

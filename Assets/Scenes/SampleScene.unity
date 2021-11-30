@@ -1357,6 +1357,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1377481891}
+  - component: {fileID: 1377481892}
   m_Layer: 0
   m_Name: Hideables
   m_TagString: Untagged
@@ -1381,6 +1382,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1377481892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377481890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8155441a3292324b94c21352a28ec72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetType: 0
+  User: Rob
+  targetKey: 306
+  size: 1
 --- !u!1 &1458991628
 GameObject:
   m_ObjectHideFlags: 0

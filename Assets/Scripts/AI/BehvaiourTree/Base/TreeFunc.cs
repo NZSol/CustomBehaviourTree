@@ -103,36 +103,6 @@ public class TreeFunc : MonoBehaviour
         }
     }
 
-    public bool CanSeePlayer()
-    {
-        RaycastHit hit;
-        Vector3 rayDir = player.transform.position - transform.position;
-        if (Vector3.Angle(rayDir, transform.forward) < fovRange)
-        {
-            if (Physics.Raycast(transform.position, rayDir, out hit))
-            {
-                if (hit.transform.tag == "Player")
-                {
-                    Debug.DrawRay(transform.position, rayDir, Color.green);
-                    target = hit.point;
-                    canCount = false;
-                    return true;
-                }
-                else
-                {
-                    Debug.DrawRay(transform.position, rayDir, Color.yellow);
-                    return false;
-                }
-            }
-        }
-        else
-        {
-            Debug.DrawRay(transform.position, rayDir, Color.red);
-            return false;
-        }
-        Debug.DrawRay(transform.position, rayDir, Color.black);
-        return false;
-    }
 
     public void SetColor(Color color)
     {
@@ -144,7 +114,7 @@ public class TreeFunc : MonoBehaviour
     }
     public void nodePrint(BTCoreNode node)
     {
-        print($"{gameObject.name} {node}");
+        //print($"{gameObject.name} {node}");
     }
 }
 

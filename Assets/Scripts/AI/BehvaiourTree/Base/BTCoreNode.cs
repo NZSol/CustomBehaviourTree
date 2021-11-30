@@ -11,6 +11,11 @@ public abstract class BTCoreNode
     protected TreeFunc myAI;
 
     public NodeState state { get { return _state; } }
+    public virtual void onNodeEnter()
+    {
+        myAI.curNode = this;
+        Debug.Log("Test");
+    }
 
     public abstract NodeState Evaluate();
 

@@ -13,11 +13,21 @@ public class Timer : BTCoreNode
         this.myAI = myAI;
     }
 
-
+    public override void onNodeEnter()
+    {
+        base.onNodeEnter();
+        Debug.Log("HIt");
+        timer = 0;
+    }
 
 
     public override NodeState Evaluate()
     {
+        if (myAI.curNode != this)
+        {
+            onNodeEnter();
+        }
+
         canCount = myAI.canCount;
 
         myAI.nodePrint(this);

@@ -7,8 +7,10 @@ public class Screencap : MonoBehaviour
     //Declaration for file type. Modify with ,[file type for additional types you wish to add]
     public enum fileType { png, jpg, tif}
     public fileType targetType = fileType.png;
-    
+
     //name of folder to ad screenshots to
+    [SerializeField]
+    string User = "";
     string folderPath = "Screenshots/";
 
     //Specific key to press to take screenshot
@@ -18,7 +20,10 @@ public class Screencap : MonoBehaviour
     [SerializeField]
     int size = 1;
 
-
+    void Awake()
+    {
+        folderPath = ($"Screenshots/{User}/");
+    }
 
     void Start()
     {

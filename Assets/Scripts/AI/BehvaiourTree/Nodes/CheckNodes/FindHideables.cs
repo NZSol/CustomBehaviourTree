@@ -36,6 +36,7 @@ public class FindHideables : BTCoreNode
             return null;
     }
 
+
     public override NodeState Evaluate()
     {
         myAI.nodePrint(this);
@@ -49,12 +50,10 @@ public class FindHideables : BTCoreNode
         if (myAI.targetHideable == null)
         {
             _state = NodeState.FAILURE;
-            Debug.Log("fail");
         }
         else
         {
             _state = NodeState.SUCCESS;
-            Debug.Log("success");
         }
         return _state;
     }
