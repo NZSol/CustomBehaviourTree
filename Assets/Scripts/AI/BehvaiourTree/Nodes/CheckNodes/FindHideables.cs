@@ -38,8 +38,8 @@ public class FindHideables : BTCoreNode
 
     public override NodeState Evaluate()
     {
+        myAI.nodePrint(this);
         Collider[] hideables = locateHideables();
-        Debug.Log($"hideables count = {hideables.Length}");
         if (hideables.Length != 0 && myAI.targetHideable == null)
         {
             myAI.targetHideable = hideables[Random.Range(0, hideables.Length - 1)].gameObject;

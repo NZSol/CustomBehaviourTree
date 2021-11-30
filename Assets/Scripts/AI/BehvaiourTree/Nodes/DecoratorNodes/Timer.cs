@@ -43,6 +43,7 @@ public class Timer : BTCoreNode
                 }
                 timer -= waitTime;
                 _state = NodeState.SUCCESS;
+                myAI.canCount = false;
                 break;
         }
         return _state;

@@ -58,7 +58,7 @@ public class TreeFunc : MonoBehaviour
     void ConstructBT()
     {
         //NOTES\\
-        /*  Currently Skipping timer on finding AI
+        /*
          *  Not moving to location of hideable objects
          * 
          * 
