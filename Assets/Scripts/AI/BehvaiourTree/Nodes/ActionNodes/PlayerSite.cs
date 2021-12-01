@@ -25,11 +25,20 @@ public class PlayerSite : BTCoreNode
 
     public override string ToString()
     {
-        return ($"Move To Site: {nodeName}");
+        return ($"Move To Site: {nodeName} || TargetPlayer? {targetPlayer}");
+    }
+
+    public override void onNodeEnter()
+    {
+        base.onNodeEnter();
+        myAI.SetColor(Color.white);
     }
 
     public override NodeState Evaluate()
     {
+        if (myAI.curNode != this)
+            onNodeEnter();
+        Debug.Log(targetPlayer);
         switch (targetPlayer)
         {
             case true:
@@ -41,12 +50,13 @@ public class PlayerSite : BTCoreNode
                 range = 2.5f;
                 break;
         }
-        target = myAI.target;
         myAI.nodePrint(this);
+
 #if UNITY_EDITOR
         GameObject obj = GameObject.FindWithTag("Respawn");
         obj.transform.position = target;
 #endif
+
         float dist = Vector3.Distance(target, agent.transform.position);
         if (dist > range)
         {
@@ -61,6 +71,7 @@ public class PlayerSite : BTCoreNode
             myAI.canCount = true;
             _state = NodeState.SUCCESS;
         }
+        Debug.Log($"{_state} {nodeName}");
         return _state;
     }
 }

@@ -14,7 +14,6 @@ public abstract class BTCoreNode
     public virtual void onNodeEnter()
     {
         myAI.curNode = this;
-        Debug.Log("Test");
     }
 
     public abstract NodeState Evaluate();

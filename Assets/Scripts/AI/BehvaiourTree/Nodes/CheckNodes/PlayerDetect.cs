@@ -27,8 +27,6 @@ public class PlayerDetect : BTCoreNode
     {
         myAI.nodePrint(this);
         myAI.SetColor(Color.green);
-        LayerMask mask = 1 << 1;
-        Debug.Log(mask);
         if (!invert && CanSeePlayer())
         {
             myAI.playerFound = true;

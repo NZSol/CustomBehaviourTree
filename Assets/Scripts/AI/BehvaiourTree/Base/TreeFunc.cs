@@ -52,6 +52,7 @@ public class TreeFunc : MonoBehaviour
     float waitTimer(float min, float max)
     {
         float value = Random.Range(min, max);
+        print(value);
         return value;
     }
 
@@ -69,10 +70,11 @@ public class TreeFunc : MonoBehaviour
         //----------Initializing Leaves----------\\
         Patrol patrol = new Patrol(patrolValue, patrolPoints, agent, this, waitTimer(waitTimerMin, waitTimerMax));
         PlayerDetect PlayerFinder = new PlayerDetect(this, false, player, agent, fovRange);
+        PlayerDetect PlayerFinderInvert = new PlayerDetect(this, true, player, agent, fovRange);
         Chaser chase = new Chaser(player, agent, this);
         PlayerSite lastKnownLocation = new PlayerSite(agent, player, this, true, "Player pos");
         PlayerSite targetHider = new PlayerSite(agent, player, this, false, "Hideable");
-        Inverter sightsInvert = new Inverter(PlayerFinder, this);
+        Inverter sightsInvert = new Inverter(PlayerFinderInvert, this);
         Timer waitForTimer = new Timer(waitTimer(waitTimerMin, waitTimerMax), this);
         FindHideables hideableObjs = new FindHideables(radius, this, agent);
 
@@ -114,7 +116,7 @@ public class TreeFunc : MonoBehaviour
     }
     public void nodePrint(BTCoreNode node)
     {
-        //print($"{gameObject.name} {node}");
+        print($"{gameObject.name} {node}");
     }
 }
 
