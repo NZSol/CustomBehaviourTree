@@ -13,27 +13,22 @@ public class Timer : BTCoreNode
         this.myAI = myAI;
     }
 
-    //public override void onNodeEnter()
-    //{
-    //    base.onNodeEnter();
-    //    timer = 0;
-    //}
-
 
     public override NodeState Evaluate()
     {
         canCount = myAI.canCount;
 
         myAI.nodePrint(this);
-        switch (timer < waitTime)
+
+        switch(timer < waitTime)
         {
             case true:
                 if (canCount)
                 {
                     timer += Time.deltaTime;
-                    //myAI.SetColor(Color.black);
                     _state = NodeState.RUNNING;
-                    return _state;
+                    Debug.Log(timer);
+                    Debug.Break();
                 }
                 else
                 {
@@ -47,15 +42,14 @@ public class Timer : BTCoreNode
                     myAI.canCount = false;
                 }
                 timer -= waitTime;
-                _state = NodeState.SUCCESS;
-                myAI.canCount = false;
-                if(myAI.targetHideable != null)
+                if (myAI.targetHideable != null)
                 {
                     myAI.targetHideable = null;
                 }
+                _state = NodeState.SUCCESS;
                 break;
         }
-        Debug.Log($"Hit Timer. TimerWait = {waitTime}. My current timer = {timer}");
+
         return _state;
     }
 }

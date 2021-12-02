@@ -21,23 +21,23 @@ public class Sequencer : BTCoreNode
     public override NodeState Evaluate()
     {
         myAI.nodePrint(this);
-        bool isNodeRunning = false;
         foreach(var node in nodes)
         {
             switch (node.Evaluate())
             {
                 case NodeState.RUNNING:
-                    isNodeRunning = true;
-                    break;
-                case NodeState.SUCCESS:
+                    _state = NodeState.RUNNING;
+                    return _state;
 
+                case NodeState.SUCCESS:
                     break;
+
                 case NodeState.FAILURE:
                     _state = NodeState.FAILURE;
                     return _state;
             }
         }
-        _state = isNodeRunning ? NodeState.RUNNING : NodeState.SUCCESS;
+        _state = NodeState.SUCCESS;
         return _state;
     }
 }

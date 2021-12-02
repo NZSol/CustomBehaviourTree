@@ -47,6 +47,7 @@ public class TreeFunc : MonoBehaviour
     private void Start()
     {
         ConstructBT();
+        curNode = rootNode;
     }
 
     float waitTimer(float min, float max)
@@ -72,8 +73,8 @@ public class TreeFunc : MonoBehaviour
         PlayerDetect PlayerFinder = new PlayerDetect(this, false, player, agent, fovRange);
         PlayerDetect PlayerFinderInvert = new PlayerDetect(this, true, player, agent, fovRange);
         Chaser chase = new Chaser(player, agent, this);
-        PlayerSite lastKnownLocation = new PlayerSite(agent, player, this, true, "Player pos");
-        PlayerSite targetHider = new PlayerSite(agent, player, this, false, "Hideable");
+        PlayerSite lastKnownLocation = new PlayerSite(agent, player, this);
+        HideableSite targetHider = new HideableSite(agent, player, this);
         Inverter sightsInvert = new Inverter(PlayerFinderInvert, this);
         Timer waitForTimer = new Timer(waitTimer(waitTimerMin, waitTimerMax), this);
         FindHideables hideableObjs = new FindHideables(radius, this, agent);
@@ -98,6 +99,7 @@ public class TreeFunc : MonoBehaviour
     private void Update()
     {
         rootNode.Evaluate();
+        Debug.Break();
 
         if (rootNode.state == BTCoreNode.NodeState.FAILURE)
         {
