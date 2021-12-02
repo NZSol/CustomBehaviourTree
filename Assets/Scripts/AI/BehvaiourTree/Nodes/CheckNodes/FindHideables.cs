@@ -20,7 +20,11 @@ public class FindHideables : BTCoreNode
     {
         List<Collider> finalColsOut = new List<Collider>();
         Collider[] hitcols = Physics.OverlapSphere(agent.transform.position, radius);
-        if (hitcols.Length > 0)
+        if (hitcols == null)
+        {
+            return null;
+        }
+        else
         {
             foreach (Collider col in hitcols)
             {
@@ -32,8 +36,6 @@ public class FindHideables : BTCoreNode
             hitcols = finalColsOut.ToArray();
             return hitcols;
         }
-        else
-            return null;
     }
 
 
@@ -41,20 +43,16 @@ public class FindHideables : BTCoreNode
     {
         myAI.nodePrint(this);
         Collider[] hideables = locateHideables();
-        if (hideables.Length != 0 && myAI.targetHideable == null)
+        if(hideables == null)
+        {
+            return NodeState.FAILURE;
+        }
+        else
         {
             myAI.targetHideable = hideables[Random.Range(0, hideables.Length - 1)].gameObject;
             Debug.Log($"My hideable is: {myAI.targetHideable}");
         }
-
-        if (myAI.targetHideable == null)
-        {
-            _state = NodeState.FAILURE;
-        }
-        else
-        {
-            _state = NodeState.SUCCESS;
-        }
+        _state = NodeState.SUCCESS;
         return _state;
     }
 }
