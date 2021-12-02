@@ -99,7 +99,10 @@ public class TreeFunc : MonoBehaviour
     private void Update()
     {
         rootNode.Evaluate();
-        Debug.Break();
+        if (PlayerInView())
+        {
+            canCount = false;
+        }
 
         if (rootNode.state == BTCoreNode.NodeState.FAILURE)
         {
@@ -119,6 +122,36 @@ public class TreeFunc : MonoBehaviour
     public void nodePrint(BTCoreNode node)
     {
         print($"{gameObject.name} {node}");
+    }
+
+
+    bool PlayerInView()
+    {
+        RaycastHit hit;
+        Vector3 rayDir = player.transform.position - agent.transform.position;
+        if (Vector3.Angle(rayDir, agent.transform.forward) < fovRange)
+        {
+            if (Physics.Raycast(agent.transform.position, rayDir, out hit))
+            {
+                if (hit.transform.tag == "Player")
+                {
+                    Debug.DrawRay(agent.transform.position, rayDir, Color.green);
+                    return true;
+                }
+                else
+                {
+                    Debug.DrawRay(agent.transform.position, rayDir, Color.yellow);
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            Debug.DrawRay(agent.transform.position, rayDir, Color.red);
+            return false;
+        }
+        Debug.DrawRay(agent.transform.position, rayDir, Color.black);
+        return false;
     }
 }
 

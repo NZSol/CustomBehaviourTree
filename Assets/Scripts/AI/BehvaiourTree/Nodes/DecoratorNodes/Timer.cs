@@ -28,14 +28,15 @@ public class Timer : BTCoreNode
                     timer += Time.deltaTime;
                     _state = NodeState.RUNNING;
                     Debug.Log(timer);
-                    Debug.Break();
                 }
                 else
                 {
                     timer = 0;
+                    Debug.Break();
                 }
                 break;
             case false:
+                Debug.Break();
                 if (myAI.playerFound)
                 {
                     myAI.playerFound = false;
