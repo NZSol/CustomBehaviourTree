@@ -11,6 +11,7 @@ public class TreeFunc : MonoBehaviour
     [HideInInspector]
     public float waitTimerMin = 0f, waitTimerMax = 5f;
     public bool playerFound = false;
+    public bool hidingFound = false;
     //------------Searching Vars------------\\
     [HideInInspector]
     public GameObject targetHideable = null;
@@ -84,9 +85,9 @@ public class TreeFunc : MonoBehaviour
 
 
         Sequencer patrolSeq = new Sequencer(new List<BTCoreNode> { patrol, new Printer("PatrolSequence") }, this, "PatrolSeq");
-        Sequencer searchHiding = new Sequencer(new List<BTCoreNode> { hideableObjs, targetHider, waitForTimer}, this, "SearchHidingSequence");
+        Sequencer searchHiding = new Sequencer(new List<BTCoreNode> { hideableObjs, targetHider, waitForTimer, new DisableBool("hidingFound", this)}, this, "SearchHidingSequence");
         Selector searchHiddenLocal = new Selector(new List<BTCoreNode> { searchHiding }, this, "SearchHidden||LocalAreas");
-        Sequencer moveToLastKnownLocation = new Sequencer(new List<BTCoreNode> { lastKnownLocation, waitForTimer, searchHiddenLocal }, this, "MoveToLocationSequence");
+        Sequencer moveToLastKnownLocation = new Sequencer(new List<BTCoreNode> { lastKnownLocation, waitForTimer, new DisableBool("playerFound", this), searchHiddenLocal }, this, "MoveToLocationSequence");
 
         Sequencer lostSightsSeq = new Sequencer(new List<BTCoreNode> { sightsInvert, new BooleanCheck(playerFound, this), moveToLastKnownLocation }, this, "LostSightSeq");
         Selector huntInvestigate = new Selector(new List<BTCoreNode> { playerInSight, lostSightsSeq }, this, "HuntInvestigate");

@@ -41,6 +41,7 @@ public class FindHideables : BTCoreNode
 
     public override NodeState Evaluate()
     {
+        Debug.Break();
         myAI.nodePrint(this);
         Collider[] hideables = locateHideables();
         if(hideables == null)

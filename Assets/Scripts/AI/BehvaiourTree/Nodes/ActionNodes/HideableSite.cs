@@ -22,7 +22,7 @@ public class HideableSite : BTCoreNode
 
     public override NodeState Evaluate()
     {
-
+        Debug.Log("Hiding");
         target = myAI.targetHideable;
         range = 0.5f;
         myAI.nodePrint(this);

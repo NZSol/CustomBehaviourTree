@@ -30,6 +30,7 @@ public class PlayerDetect : BTCoreNode
         if (!invert && CanSeePlayer())
         {
             myAI.playerFound = true;
+            myAI.hidingFound = true;
         }
         return CanSeePlayer() ? NodeState.SUCCESS : NodeState.FAILURE;
     }

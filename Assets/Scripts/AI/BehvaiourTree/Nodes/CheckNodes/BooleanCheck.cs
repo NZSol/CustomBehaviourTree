@@ -4,18 +4,19 @@ using UnityEngine;
 
 public class BooleanCheck : BTCoreNode
 {
-    bool value;
+    bool player, hiding;
+
     public BooleanCheck(bool value, TreeFunc myAI)
     {
-        this.value = value;
         this.myAI = myAI;
     }
 
     public override NodeState Evaluate()
     {
-        value = myAI.playerFound;
+        player = myAI.playerFound;
+        hiding = myAI.hidingFound;
         myAI.nodePrint(this);
-        switch (value)
+        switch (player || hiding)
         {
             case true:
                 _state = NodeState.SUCCESS;
