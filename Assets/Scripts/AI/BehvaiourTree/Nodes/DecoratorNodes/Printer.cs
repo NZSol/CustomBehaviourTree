@@ -12,6 +12,8 @@ public class Printer : BTCoreNode
 
     public override NodeState Evaluate()
     {
+
+        Debug.Log(message);
         return NodeState.SUCCESS;
     }
 }

@@ -38,7 +38,6 @@ public class Selector : BTCoreNode
             }
         }
         _state = NodeState.FAILURE;
-        Debug.Log("SelHit");
         return _state;
     }
 }

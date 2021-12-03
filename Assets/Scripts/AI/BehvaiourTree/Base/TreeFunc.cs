@@ -47,6 +47,7 @@ public class TreeFunc : MonoBehaviour
     private void Start()
     {
         ConstructBT();
+        curNode = rootNode;
     }
 
     float waitTimer(float min, float max)
@@ -72,8 +73,8 @@ public class TreeFunc : MonoBehaviour
         PlayerDetect PlayerFinder = new PlayerDetect(this, false, player, agent, fovRange);
         PlayerDetect PlayerFinderInvert = new PlayerDetect(this, true, player, agent, fovRange);
         Chaser chase = new Chaser(player, agent, this);
-        PlayerSite lastKnownLocation = new PlayerSite(agent, player, this, true, "Player pos");
-        PlayerSite targetHider = new PlayerSite(agent, player, this, false, "Hideable");
+        PlayerSite lastKnownLocation = new PlayerSite(agent, player, this);
+        HideableSite targetHider = new HideableSite(agent, player, this);
         Inverter sightsInvert = new Inverter(PlayerFinderInvert, this);
         Timer waitForTimer = new Timer(waitTimer(waitTimerMin, waitTimerMax), this);
         FindHideables hideableObjs = new FindHideables(radius, this, agent);
@@ -98,6 +99,10 @@ public class TreeFunc : MonoBehaviour
     private void Update()
     {
         rootNode.Evaluate();
+        if (PlayerInView())
+        {
+            canCount = false;
+        }
 
         if (rootNode.state == BTCoreNode.NodeState.FAILURE)
         {
@@ -117,6 +122,36 @@ public class TreeFunc : MonoBehaviour
     public void nodePrint(BTCoreNode node)
     {
         print($"{gameObject.name} {node}");
+    }
+
+
+    bool PlayerInView()
+    {
+        RaycastHit hit;
+        Vector3 rayDir = player.transform.position - agent.transform.position;
+        if (Vector3.Angle(rayDir, agent.transform.forward) < fovRange)
+        {
+            if (Physics.Raycast(agent.transform.position, rayDir, out hit))
+            {
+                if (hit.transform.tag == "Player")
+                {
+                    Debug.DrawRay(agent.transform.position, rayDir, Color.green);
+                    return true;
+                }
+                else
+                {
+                    Debug.DrawRay(agent.transform.position, rayDir, Color.yellow);
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            Debug.DrawRay(agent.transform.position, rayDir, Color.red);
+            return false;
+        }
+        Debug.DrawRay(agent.transform.position, rayDir, Color.black);
+        return false;
     }
 }
 

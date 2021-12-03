@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PlayerSite : BTCoreNode
+public class HideableSite : BTCoreNode
 {
     NavMeshAgent agent;
     Transform player;
-    Vector3 target;
-    Vector3 position;
+    string nodeName;
+    GameObject target;
     float range;
 
-    string nodeName;
 
-    public PlayerSite(NavMeshAgent agent, Transform player, TreeFunc myAI)
+    public HideableSite(NavMeshAgent agent, Transform player, TreeFunc myAI)
     {
         this.agent = agent;
         this.player = player;
@@ -21,38 +20,31 @@ public class PlayerSite : BTCoreNode
     }
 
 
-    public override void onNodeEnter()
-    {
-        base.onNodeEnter();
-        myAI.SetColor(Color.white);
-        Debug.Log(this);
-    }
-
     public override NodeState Evaluate()
     {
-        if (myAI.curNode != this)
-            onNodeEnter();
 
-        target = myAI.target;
+        target = myAI.targetHideable;
         range = 0.5f;
         myAI.nodePrint(this);
 
 #if UNITY_EDITOR
         GameObject obj = null;
         GameObject[] objs = GameObject.FindGameObjectsWithTag("Respawn");
-        foreach (GameObject target in objs)
+        foreach(GameObject target in objs)
         {
-            if (target.name.Contains("Player"))
+            if (target.name.Contains("Hideable"))
+            {
                 obj = target;
+            }
         }
-        obj.transform.position = target;
+        obj.transform.position = target.transform.position;
 #endif
 
-        float dist = Vector3.Distance(target, agent.transform.position);
+        float dist = Vector3.Distance(target.transform.position, agent.transform.position);
         if (dist > range)
         {
             agent.isStopped = false;
-            agent.SetDestination(target);
+            agent.SetDestination(target.transform.position);
             myAI.SetColor(Color.cyan);
             _state = NodeState.RUNNING;
         }
