@@ -122,7 +122,7 @@ public class TreeFunc : MonoBehaviour
     }
     public void nodePrint(BTCoreNode node)
     {
-        print($"{gameObject.name} {node}");
+        //print($"{gameObject.name} {node}");
     }
 
 

@@ -62,7 +62,7 @@ public class PlayerSite : BTCoreNode
             myAI.canCount = true;
             _state = NodeState.SUCCESS;
         }
-        Debug.Log($"{_state} {nodeName}");
+        //Debug.Log($"{_state} {nodeName}");
         return _state;
     }
 }

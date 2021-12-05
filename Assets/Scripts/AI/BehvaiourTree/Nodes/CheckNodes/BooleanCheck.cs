@@ -25,6 +25,7 @@ public class BooleanCheck : BTCoreNode
                 _state = NodeState.FAILURE;
                 break;
         }
+        Debug.Log(_state);
         return _state;
     }
 }

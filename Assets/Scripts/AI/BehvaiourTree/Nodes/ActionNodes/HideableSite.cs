@@ -53,6 +53,7 @@ public class HideableSite : BTCoreNode
             agent.isStopped = true;
             myAI.canCount = true;
             _state = NodeState.SUCCESS;
+            Debug.Log("hit");
         }
         Debug.Log($"{_state} {nodeName}");
         return _state;
