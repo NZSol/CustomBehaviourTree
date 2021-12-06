@@ -6,6 +6,8 @@ using UnityEngine.AI;
 public class InvestigateSites : BTCoreNode
 {
     Queue<Vector3> positions = new Queue<Vector3>();
+    Vector3 target;
+    int posCount;
     NavMeshAgent agent;
     float waitTime;
 
@@ -19,7 +21,10 @@ public class InvestigateSites : BTCoreNode
 
     public override NodeState Evaluate()
     {
-        throw new System.NotImplementedException();
+        if (target == Vector3.zero)
+        {
+            target = positions.Dequeue();
+        }
     }
 
 }
