@@ -17,6 +17,8 @@ public class TreeFunc : MonoBehaviour
     public GameObject targetHideable = null;
     [HideInInspector]
     public float radius = 0;
+    [HideInInspector]
+    public LayerMask layer;
     //------------Transform Vars------------\\
     [HideInInspector]
     public Transform[] patrolPoints = null;
@@ -27,13 +29,14 @@ public class TreeFunc : MonoBehaviour
     [HideInInspector]
     public float fovRange = 0;
     public int patrolValue = 0;
+    Queue<Vector3> exploreLocation = new Queue<Vector3>();
     //------------Accessory Vars------------\\
     [HideInInspector]
     public NavMeshAgent agent = null;
     [HideInInspector]
     public Material mat = null;
     //[HideInInspector]
-    public bool canCount = false, canRun = true;
+    public bool canCount = false, canRun = true, gotPositions = false;
     //-------Initialize accessory vars-------\\
     private void Awake()
     {
@@ -74,17 +77,21 @@ public class TreeFunc : MonoBehaviour
         PlayerDetect PlayerFinderInvert = new PlayerDetect(this, true, player, agent, fovRange);
         Chaser chase = new Chaser(player, agent, this);
         PlayerSite lastKnownLocation = new PlayerSite(agent, player, this, waitTimer(waitTimerMin, waitTimerMax));
+
         HideableSite targetHider = new HideableSite(agent, this, waitTimer(waitTimerMin, waitTimerMax));
         Inverter sightsInvert = new Inverter(PlayerFinderInvert, this);
         FindHideables hideableObjs = new FindHideables(radius, this, agent);
+        GetPositions getPos = new GetPositions(agent, radius, layer, this);
+        InvestigateSites moveToPositions = new InvestigateSites(exploreLocation, agent, waitTimer(waitTimerMin, waitTimerMax), this);
 
         //-----------Initializing Series-----------\\
         Sequencer playerInSight = new Sequencer(new List<BTCoreNode> { PlayerFinder, new Printer("PlayerFound"), chase }, this, "playerInSight");
 
 
         Sequencer patrolSeq = new Sequencer(new List<BTCoreNode> { patrol, new Printer("PatrolSequence") }, this, "PatrolSeq");
+        Sequencer searchLocal = new Sequencer(new List<BTCoreNode> { getPos, moveToPositions }, this, "LocalSeq");
         Sequencer searchHiding = new Sequencer(new List<BTCoreNode> { hideableObjs, targetHider, new DisableBool("hidingFound", this)}, this, "SearchHidingSequence");
-        Selector searchHiddenLocal = new Selector(new List<BTCoreNode> { searchHiding }, this, "SearchHidden||LocalAreas");
+        Selector searchHiddenLocal = new Selector(new List<BTCoreNode> { searchHiding, searchLocal }, this, "SearchHidden||LocalAreas");
         Sequencer moveToLastKnownLocation = new Sequencer(new List<BTCoreNode> { lastKnownLocation, new DisableBool("playerFound", this), searchHiddenLocal }, this, "MoveToLocationSequence");
 
         Sequencer lostSightsSeq = new Sequencer(new List<BTCoreNode> { sightsInvert, new BooleanCheck(playerFound, this), moveToLastKnownLocation }, this, "LostSightSeq");

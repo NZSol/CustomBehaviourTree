@@ -14,6 +14,7 @@ public class NewAI : MonoBehaviour
     [SerializeField] int waitTimerMin = 0, waitTimerMax = 5;
     //----------Searching values----------\\
     [SerializeField] float radius = 0;
+    [SerializeField] LayerMask mask = 1 << 8;
     //------------Transform Vars------------\\
     [SerializeField] Transform[] patrolPoints = null;
     [SerializeField] Transform player = null;
@@ -49,6 +50,7 @@ public class NewAI : MonoBehaviour
         tree.fovRange = fovRange;
         //----------Searching values----------\\
         tree.radius = radius;
+        tree.layer = mask;
         //------Location Vars------\\
         tree.patrolPoints = patrolPoints;
         tree.player = player;

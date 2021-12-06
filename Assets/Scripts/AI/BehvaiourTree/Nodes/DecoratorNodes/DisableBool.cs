@@ -15,15 +15,12 @@ public class DisableBool : BTCoreNode
 
     public override NodeState Evaluate()
     {
-        Debug.Log(input);
         switch (input)
         {
             case "playerFound":
                 myAI.playerFound = false;
-                Debug.Log("Hit Player");
                 break;
             case "hidingFound":
-                Debug.Log("Hit Hiding");
                 myAI.hidingFound = false;
                 break;
         }

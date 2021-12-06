@@ -43,13 +43,12 @@ public class FindHideables : BTCoreNode
     {
         myAI.nodePrint(this);
         Collider[] hideables = locateHideables();
-        Debug.Log(myAI.targetHideable);
         if(myAI.targetHideable == null)
         {
             if (hideables.Length == 0)
             {
                 myAI.targetHideable = null;
-                return NodeState.SUCCESS;
+                return NodeState.FAILURE;
             }
             else
             {
