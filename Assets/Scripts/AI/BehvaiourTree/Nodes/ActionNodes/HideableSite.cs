@@ -6,23 +6,31 @@ using UnityEngine.AI;
 public class HideableSite : BTCoreNode
 {
     NavMeshAgent agent;
-    Transform player;
-    string nodeName;
     GameObject target;
     float range;
+    float timer;
+    float waitTime;
 
 
-    public HideableSite(NavMeshAgent agent, Transform player, TreeFunc myAI)
+    public HideableSite(NavMeshAgent agent, TreeFunc myAI, float waitTime)
     {
         this.agent = agent;
-        this.player = player;
         this.myAI = myAI;
+        this.waitTime = waitTime;
     }
 
+    public override void onNodeEnter()
+    {
+        myAI.canRun = true;
+    }
 
     public override NodeState Evaluate()
     {
-        Debug.Log("Hiding");
+        onNodeEnter();
+        if(myAI.targetHideable == null)
+        {
+            return NodeState.FAILURE;
+        }
         target = myAI.targetHideable;
         range = 0.5f;
         myAI.nodePrint(this);
@@ -50,12 +58,17 @@ public class HideableSite : BTCoreNode
         }
         else
         {
-            agent.isStopped = true;
-            myAI.canCount = true;
-            _state = NodeState.SUCCESS;
-            Debug.Log("hit");
+            timer += Time.deltaTime;
+            if (timer > waitTime)
+            {
+                timer = 0;
+                agent.isStopped = true;
+                myAI.canCount = true;
+                myAI.targetHideable = null;
+                _state = NodeState.SUCCESS;
+            }
         }
-        Debug.Log($"{_state} {nodeName}");
+        Debug.Log($"{_state}");
         return _state;
     }
 }

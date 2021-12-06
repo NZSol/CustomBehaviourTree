@@ -25,7 +25,6 @@ public class PlayerDetect : BTCoreNode
 
     public override NodeState Evaluate()
     {
-        Debug.Log(agent.destination);
         myAI.nodePrint(this);
         myAI.SetColor(Color.green);
         if (!invert && CanSeePlayer())

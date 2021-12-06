@@ -41,17 +41,21 @@ public class FindHideables : BTCoreNode
 
     public override NodeState Evaluate()
     {
-        Debug.Break();
         myAI.nodePrint(this);
         Collider[] hideables = locateHideables();
-        if(hideables == null)
+        Debug.Log(myAI.targetHideable);
+        if(myAI.targetHideable == null)
         {
-            return NodeState.FAILURE;
-        }
-        else
-        {
-            myAI.targetHideable = hideables[Random.Range(0, hideables.Length - 1)].gameObject;
-            Debug.Log($"My hideable is: {myAI.targetHideable}");
+            if (hideables.Length == 0)
+            {
+                myAI.targetHideable = null;
+                return NodeState.SUCCESS;
+            }
+            else
+            {
+                myAI.targetHideable = hideables[Random.Range(0, hideables.Length - 1)].gameObject;
+                Debug.Log($"My hideable is: {myAI.targetHideable}");
+            }
         }
         _state = NodeState.SUCCESS;
         return _state;

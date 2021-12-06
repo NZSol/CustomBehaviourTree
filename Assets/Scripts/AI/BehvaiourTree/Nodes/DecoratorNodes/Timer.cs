@@ -7,25 +7,34 @@ public class Timer : BTCoreNode
     protected float waitTime;
     float timer;
     bool canCount;
-    public Timer(float waitTime, TreeFunc myAI)
+    string nodeName;
+    bool canRun;
+    public Timer(float waitTime, TreeFunc myAI, string nodeName)
     {
         this.waitTime = waitTime;
         this.myAI = myAI;
+        this.nodeName = nodeName;
     }
 
+    public override string ToString()
+    {
+        return ($"{nodeName} {timer}");
+    }
 
     public override NodeState Evaluate()
     {
         canCount = myAI.canCount;
+        canRun = myAI.canRun;
 
         myAI.nodePrint(this);
 
         switch(timer < waitTime)
         {
             case true:
-                if (canCount)
+                if (canCount && canRun)
                 {
                     timer += Time.deltaTime;
+                    timer = waitTime;
                     _state = NodeState.RUNNING;
                 }
                 else
@@ -34,20 +43,14 @@ public class Timer : BTCoreNode
                 }
                 break;
             case false:
-                Debug.Break();
                 if (myAI.playerFound)
                 {
                     myAI.canCount = false;
                 }
                 timer -= waitTime;
-                if (myAI.targetHideable != null)
-                {
-                    myAI.targetHideable = null;
-                }
                 _state = NodeState.SUCCESS;
                 break;
         }
-
         return _state;
     }
 }

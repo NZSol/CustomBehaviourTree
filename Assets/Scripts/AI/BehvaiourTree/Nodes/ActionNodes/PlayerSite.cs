@@ -10,14 +10,17 @@ public class PlayerSite : BTCoreNode
     Vector3 target;
     Vector3 position;
     float range;
+    float timer;
+    float waitTime;
 
     string nodeName;
 
-    public PlayerSite(NavMeshAgent agent, Transform player, TreeFunc myAI)
+    public PlayerSite(NavMeshAgent agent, Transform player, TreeFunc myAI, float waitTime)
     {
         this.agent = agent;
         this.player = player;
         this.myAI = myAI;
+        this.waitTime = waitTime;
     }
 
 
@@ -25,7 +28,6 @@ public class PlayerSite : BTCoreNode
     {
         base.onNodeEnter();
         myAI.SetColor(Color.white);
-        Debug.Log(this);
     }
 
     public override NodeState Evaluate()
@@ -49,7 +51,7 @@ public class PlayerSite : BTCoreNode
 #endif
 
         float dist = Vector3.Distance(target, agent.transform.position);
-        if (dist > range)
+        if (dist > range && myAI.playerFound)
         {
             agent.isStopped = false;
             agent.SetDestination(target);
@@ -58,11 +60,16 @@ public class PlayerSite : BTCoreNode
         }
         else
         {
-            agent.isStopped = true;
-            myAI.canCount = true;
-            _state = NodeState.SUCCESS;
+            timer += Time.deltaTime;
+            if(timer > waitTime)
+            {
+                timer = 0;
+                myAI.canRun = false;
+                agent.isStopped = true;
+                myAI.canCount = true;
+                _state = NodeState.SUCCESS;
+            }
         }
-        //Debug.Log($"{_state} {nodeName}");
         return _state;
     }
 }
