@@ -76,8 +76,6 @@ public class TreeFunc : MonoBehaviour
         PlayerSite lastKnownLocation = new PlayerSite(agent, player, this, waitTimer(waitTimerMin, waitTimerMax));
         HideableSite targetHider = new HideableSite(agent, this, waitTimer(waitTimerMin, waitTimerMax));
         Inverter sightsInvert = new Inverter(PlayerFinderInvert, this);
-        Timer sightTimer = new Timer(waitTimer(waitTimerMin, waitTimerMax), this, "wait");
-        Timer hideTimer = new Timer(waitTimer(waitTimerMin, waitTimerMax), this, "hide");
         FindHideables hideableObjs = new FindHideables(radius, this, agent);
 
         //-----------Initializing Series-----------\\
