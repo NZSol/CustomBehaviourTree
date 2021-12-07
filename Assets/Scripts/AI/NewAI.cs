@@ -23,6 +23,7 @@ public class NewAI : MonoBehaviour
     //------------Accessory Vars------------\\
     NavMeshAgent agent;
     Material mat;
+    [SerializeField] GameObject shape;
     #endregion
 
     //Initialize local vars
@@ -55,5 +56,7 @@ public class NewAI : MonoBehaviour
         tree.patrolPoints = patrolPoints;
         tree.player = player;
         tree.patrolValue = patrolValue;
+
+        tree.shape = shape;
     }
 }

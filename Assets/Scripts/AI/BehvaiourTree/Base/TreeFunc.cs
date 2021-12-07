@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -29,7 +30,7 @@ public class TreeFunc : MonoBehaviour
     [HideInInspector]
     public float fovRange = 0;
     public int patrolValue = 0;
-    Queue<Vector3> exploreLocation = new Queue<Vector3>();
+    public Queue<Vector3> exploreLocation = new Queue<Vector3>();
     //------------Accessory Vars------------\\
     [HideInInspector]
     public NavMeshAgent agent = null;
@@ -37,6 +38,9 @@ public class TreeFunc : MonoBehaviour
     public Material mat = null;
     //[HideInInspector]
     public bool canCount = false, canRun = true, gotPositions = false;
+
+    public GameObject shape;
+    public List<Vector3> positions = new List<Vector3>();
     //-------Initialize accessory vars-------\\
     private void Awake()
     {
@@ -104,6 +108,9 @@ public class TreeFunc : MonoBehaviour
 
     private void Update()
     {
+        positions = exploreLocation.ToList();
+        print($"Number of positions == {positions.Count}");
+
         rootNode.Evaluate();
         if (PlayerInView())
         {

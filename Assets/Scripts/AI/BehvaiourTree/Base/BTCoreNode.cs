@@ -13,7 +13,6 @@ public abstract class BTCoreNode
     public NodeState state { get { return _state; } }
     public virtual void onNodeEnter()
     {
-        myAI.curNode = this;
     }
 
     public abstract NodeState Evaluate();

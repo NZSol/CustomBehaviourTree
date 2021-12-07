@@ -18,32 +18,59 @@ public class GetPositions : BTCoreNode
         this.radius = radius;
         this.layer = layer;
     }
-    Vector3 randomNavSphere(Vector3 position, float radius, LayerMask layer)
-    {
-        Vector3 randomPoint = Random.insideUnitSphere * radius;
-        randomPoint += position;
-        NavMeshHit navHit;
-        NavMesh.SamplePosition(randomPoint, out navHit, radius, layer);
 
-        return navHit.position;
+    bool randomPoint(Vector3 origin, float radius, out Vector3 result)
+    {
+        for (int i = 0; i < 30; i++)
+        {
+            Vector3 randomPoint = origin + Random.insideUnitSphere * radius;
+
+            RaycastHit hit;
+            if (Physics.Raycast(origin, randomPoint - origin, out hit, Mathf.Infinity, layer))
+            {
+                if (hit.transform.name.Contains("Plane"))
+                {
+                    result = hit.point;
+                    return true;
+                }
+            }
+        }
+        result = Vector3.zero;
+        return false;
     }
+
 
 
     public override NodeState Evaluate()
     {
-        if(positions.Count < 3)
+        onNodeEnter();
+        if(myAI.exploreLocation.Count < 4 && !myAI.gotPositions)
         {
-            for (int i = 0; i < 3; ++i)
+            while (myAI.exploreLocation.Count < 4)
             {
-                positions.Enqueue(randomNavSphere(agent.transform.position, radius, layer));
+                Vector3 point;
+                if (randomPoint(agent.transform.position, radius, out point))
+                {
+                    myAI.exploreLocation.Enqueue(point);
+                    Debug.Log("hit");
+                    myAI.exploreLocation = positions;
+                }
             }
+            Debug.Log(myAI.exploreLocation.Count);
             myAI.gotPositions = true;
             return NodeState.SUCCESS;
         }
 
-        if(myAI.gotPositions)
+        if(myAI.gotPositions && myAI.exploreLocation.Count > 0)
         {
+            Debug.Log(myAI.exploreLocation.Count);
             return NodeState.SUCCESS;
+        }
+        else if (myAI.gotPositions && myAI.exploreLocation.Count == 0)
+        {
+            myAI.hidingFound = false;
+            myAI.gotPositions = false;
+            return NodeState.FAILURE;
         }
         return NodeState.RUNNING;
     }
