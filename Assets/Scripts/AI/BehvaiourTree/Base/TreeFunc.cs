@@ -148,22 +148,22 @@ public class TreeFunc : MonoBehaviour
             {
                 if (hit.transform.tag == "Player")
                 {
-                    Debug.DrawRay(agent.transform.position, rayDir, Color.green);
+                    //Debug.DrawRay(agent.transform.position, rayDir, Color.green);
                     return true;
                 }
                 else
                 {
-                    Debug.DrawRay(agent.transform.position, rayDir, Color.yellow);
+                    //Debug.DrawRay(agent.transform.position, rayDir, Color.yellow);
                     return false;
                 }
             }
         }
         else
         {
-            Debug.DrawRay(agent.transform.position, rayDir, Color.red);
+            //Debug.DrawRay(agent.transform.position, rayDir, Color.red);
             return false;
         }
-        Debug.DrawRay(agent.transform.position, rayDir, Color.black);
+        //Debug.DrawRay(agent.transform.position, rayDir, Color.black);
         return false;
     }
 }
