@@ -81,7 +81,6 @@ public class PlayerDetect : BTCoreNode
         {
             if (hit.transform.tag == "Player")
             {
-                //Debug.DrawRay(agent.transform.position, dir, Color.green);
                 myAI.target = hit.point;
                 if (myAI.canCount)
                 {
@@ -91,13 +90,11 @@ public class PlayerDetect : BTCoreNode
             }
             else
             {
-                //Debug.DrawRay(agent.transform.position, dir, Color.yellow);
                 return false;
             }
         }
         else
         {
-            //Debug.DrawRay(agent.transform.position, dir, Color.red);
             return false;
         }
     }

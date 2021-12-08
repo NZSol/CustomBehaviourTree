@@ -40,4 +40,12 @@ public class Sequencer : BTCoreNode
         _state = NodeState.SUCCESS;
         return _state;
     }
+
+    public override void CleanUp()
+    {
+        foreach (BTCoreNode node in nodes)
+        {
+            node.CleanUp();
+        }
+    }
 }

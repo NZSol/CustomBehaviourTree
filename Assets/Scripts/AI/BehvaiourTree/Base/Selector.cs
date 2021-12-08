@@ -40,4 +40,12 @@ public class Selector : BTCoreNode
         _state = NodeState.FAILURE;
         return _state;
     }
+
+    public override void CleanUp()
+    {
+        foreach (BTCoreNode node in nodes)
+        {
+            node.CleanUp();
+        }
+    }
 }

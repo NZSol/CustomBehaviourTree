@@ -27,4 +27,9 @@ public class Inverter : BTCoreNode
         }
         return _state;
     }
+
+    public override void CleanUp()
+    {
+        node.CleanUp();
+    }
 }
