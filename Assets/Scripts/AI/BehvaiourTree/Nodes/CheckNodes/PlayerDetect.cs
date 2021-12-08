@@ -26,8 +26,6 @@ public class PlayerDetect : BTCoreNode
 
         castCommands = new NativeArray<RaycastCommand>(1, Allocator.Persistent);
         castHits = new NativeArray<RaycastHit>(1, Allocator.Persistent);
-        Vector3 rayDir = agent.transform.position - player.transform.position;
-        ScheduleCast(rayDir);
     }
 
 
@@ -40,9 +38,12 @@ public class PlayerDetect : BTCoreNode
 
     public override NodeState Evaluate()
     {
+        Vector3 rayDir = player.transform.position - agent.transform.position;
+
+        ScheduleCast(rayDir);
         handle.Complete();
         RaycastHit raycastHit = castHits[0];
-        Vector3 rayDir = player.transform.position - agent.transform.position;
+
 
         bool hit = CanSeePlayer(raycastHit, rayDir);
 
@@ -58,7 +59,6 @@ public class PlayerDetect : BTCoreNode
         if (hit)
         {
             Debug.DrawRay(agent.transform.position, rayDir, Color.green);
-            Debug.Log(hit);
         }
         else
         {
@@ -101,8 +101,9 @@ public class PlayerDetect : BTCoreNode
             return false;
         }
     }
-    ~PlayerDetect()
+    public override void CleanUp()
     {
+        Debug.Log("hit");
         castCommands.Dispose();
         castHits.Dispose();
     }

@@ -17,4 +17,7 @@ public abstract class BTCoreNode
 
     public abstract NodeState Evaluate();
 
+    public virtual void CleanUp()
+    {
+    }
 }

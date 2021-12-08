@@ -106,12 +106,14 @@ public class TreeFunc : MonoBehaviour
         rootNode = new Selector(new List<BTCoreNode> { huntInvestigate, patrolSeq }, this, "Root");
     }
 
+
     private void Update()
     {
         positions = exploreLocation.ToList();
         print($"Number of positions == {positions.Count}");
 
         rootNode.Evaluate();
+
         if (PlayerInView())
         {
             canCount = false;
@@ -165,6 +167,12 @@ public class TreeFunc : MonoBehaviour
         }
         //Debug.DrawRay(agent.transform.position, rayDir, Color.black);
         return false;
+    }
+
+    private void OnDestroy()
+    {
+        rootNode.CleanUp();
+        print("Destroy");
     }
 }
 
