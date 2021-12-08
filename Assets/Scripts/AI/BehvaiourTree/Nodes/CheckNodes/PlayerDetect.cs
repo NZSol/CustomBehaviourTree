@@ -11,7 +11,7 @@ public class PlayerDetect : BTCoreNode
     Transform player;
     NavMeshAgent agent;
     float FOV;
-    
+
     NativeArray<RaycastCommand> castCommands;
     NativeArray<RaycastHit> castHits;
     JobHandle handle;
@@ -26,7 +26,10 @@ public class PlayerDetect : BTCoreNode
 
         castCommands = new NativeArray<RaycastCommand>(1, Allocator.Persistent);
         castHits = new NativeArray<RaycastHit>(1, Allocator.Persistent);
+        Vector3 rayDir = agent.transform.position - player.transform.position;
+        ScheduleCast(rayDir);
     }
+
 
     public override string ToString()
     {
@@ -51,16 +54,17 @@ public class PlayerDetect : BTCoreNode
             myAI.hidingFound = true;
         }
 
+
         if (hit)
         {
             Debug.DrawRay(agent.transform.position, rayDir, Color.green);
+            Debug.Log(hit);
         }
         else
         {
             Debug.DrawRay(agent.transform.position, rayDir, Color.red);
         }
 
-        ScheduleCast(rayDir);
         return hit ? NodeState.SUCCESS : NodeState.FAILURE;
     }
 
@@ -77,7 +81,7 @@ public class PlayerDetect : BTCoreNode
         {
             if (hit.transform.tag == "Player")
             {
-                Debug.DrawRay(agent.transform.position, dir, Color.green);
+                //Debug.DrawRay(agent.transform.position, dir, Color.green);
                 myAI.target = hit.point;
                 if (myAI.canCount)
                 {
@@ -87,14 +91,19 @@ public class PlayerDetect : BTCoreNode
             }
             else
             {
-                Debug.DrawRay(agent.transform.position, dir, Color.yellow);
+                //Debug.DrawRay(agent.transform.position, dir, Color.yellow);
                 return false;
             }
         }
         else
         {
-            Debug.DrawRay(agent.transform.position, dir, Color.red);
+            //Debug.DrawRay(agent.transform.position, dir, Color.red);
             return false;
         }
+    }
+    ~PlayerDetect()
+    {
+        castCommands.Dispose();
+        castHits.Dispose();
     }
 }
