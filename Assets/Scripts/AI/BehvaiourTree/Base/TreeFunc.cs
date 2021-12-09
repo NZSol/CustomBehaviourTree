@@ -1,18 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.Jobs;
+using Unity.Collections;
+using UnityEngine.Profiling;
 
 public class TreeFunc : MonoBehaviour
 {
-    //----------Detections values----------\\
+    //-----------Detections vars-----------\\
     [HideInInspector]
     public float sightRange = 0f, chaseRange = 0f, audioValue = 0f;
     [HideInInspector]
     public float waitTimerMin = 0f, waitTimerMax = 5f;
     public bool playerFound = false;
     public bool hidingFound = false;
+    [HideInInspector]
+    public float volume, volumeLimit;
+
+    NativeArray<RaycastCommand> rayCommand;
+    NativeArray<RaycastHit> rayHit;
+    JobHandle handle;
+
     //------------Searching Vars------------\\
     [HideInInspector]
     public GameObject targetHideable = null;
@@ -40,17 +49,26 @@ public class TreeFunc : MonoBehaviour
     public bool canCount = false, canRun = true, gotPositions = false;
 
     public GameObject shape;
-    public List<Vector3> positions = new List<Vector3>();
     //-------Initialize accessory vars-------\\
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         mat = GetComponent<MeshRenderer>().material;
+
+        rayCommand = new NativeArray<RaycastCommand>(1, Allocator.Persistent);
+        rayHit = new NativeArray<RaycastHit>(1, Allocator.Persistent);
+
+        Profiler.logFile = "myLog";
+        Profiler.enableBinaryLog = true;
+        Profiler.enabled = true;
+        Profiler.maxUsedMemory = 256 * 1024 * 1024;
     }
 
     //---------------Node Vars---------------\\
     public BTCoreNode curNode;
     private BTCoreNode rootNode;
+
+    
 
     private void Start()
     {
@@ -85,7 +103,7 @@ public class TreeFunc : MonoBehaviour
         HideableSite targetHider = new HideableSite(agent, this, waitTimer(waitTimerMin, waitTimerMax));
         Inverter sightsInvert = new Inverter(PlayerFinderInvert, this);
         FindHideables hideableObjs = new FindHideables(radius, this, agent);
-        GetPositions getPos = new GetPositions(agent, radius, layer, this);
+        GetPositions getPos = new GetPositions(agent, radius, layer, 5, this);
         InvestigateSites moveToPositions = new InvestigateSites(exploreLocation, agent, waitTimer(waitTimerMin, waitTimerMax), this);
 
         //-----------Initializing Series-----------\\
@@ -109,12 +127,16 @@ public class TreeFunc : MonoBehaviour
 
     private void Update()
     {
-        positions = exploreLocation.ToList();
-        print($"Number of positions == {positions.Count}");
-
+        Profiler.BeginSample("Tree");
         rootNode.Evaluate();
+        Profiler.EndSample();
 
-        if (PlayerInView())
+        Vector3 rayDir = player.transform.position - agent.transform.position;
+
+        ScheduleCast(rayDir);
+        handle.Complete();
+        RaycastHit hit = rayHit[0];
+        if (CanSeePlayer(hit, rayDir))
         {
             canCount = false;
         }
@@ -140,34 +162,41 @@ public class TreeFunc : MonoBehaviour
     }
 
 
-    bool PlayerInView()
+    void ScheduleCast(Vector3 dir)
     {
-        RaycastHit hit;
-        Vector3 rayDir = player.transform.position - agent.transform.position;
-        if (Vector3.Angle(rayDir, agent.transform.forward) < fovRange)
+        rayCommand[0] = new RaycastCommand(agent.transform.position, dir);
+        handle = RaycastCommand.ScheduleBatch(rayCommand, rayHit, 1);
+    }
+
+    bool CanSeePlayer(RaycastHit hit, Vector3 dir)
+    {
+        if (Vector3.Angle(dir, agent.transform.forward) < fovRange)
         {
-            if (Physics.Raycast(agent.transform.position, rayDir, out hit))
+            if (hit.transform != null && hit.transform.tag == "Player")
             {
-                if (hit.transform.tag == "Player")
+                target = hit.point;
+                if (canCount)
                 {
-                    return true;
+                    canCount = false;
                 }
-                else
-                {
-                    return false;
-                }
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
         else
         {
             return false;
         }
-        return false;
     }
 
     private void OnDestroy()
     {
         rootNode.CleanUp();
+        rayHit.Dispose();
+        rayCommand.Dispose();
         print("Destroy");
     }
 }

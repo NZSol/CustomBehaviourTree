@@ -43,9 +43,9 @@ public class PlayerDetect : BTCoreNode
         ScheduleCast(rayDir);
         handle.Complete();
         RaycastHit raycastHit = castHits[0];
-
-
         bool hit = CanSeePlayer(raycastHit, rayDir);
+
+
 
         myAI.nodePrint(this);
         myAI.SetColor(Color.green);
@@ -53,16 +53,6 @@ public class PlayerDetect : BTCoreNode
         {
             myAI.playerFound = true;
             myAI.hidingFound = true;
-        }
-
-
-        if (hit)
-        {
-            Debug.DrawRay(agent.transform.position, rayDir, Color.green);
-        }
-        else
-        {
-            Debug.DrawRay(agent.transform.position, rayDir, Color.red);
         }
 
         return hit ? NodeState.SUCCESS : NodeState.FAILURE;
@@ -79,22 +69,25 @@ public class PlayerDetect : BTCoreNode
     {
         if (Vector3.Angle(dir, agent.transform.forward) < FOV)
         {
-            if (hit.transform.tag == "Player")
+            if (hit.transform != null && hit.transform.tag == "Player")
             {
                 myAI.target = hit.point;
                 if (myAI.canCount)
                 {
                     myAI.canCount = false;
                 }
+                //Debug.DrawRay(agent.transform.position, dir, Color.green);
                 return true;
             }
             else
             {
+                //Debug.DrawRay(agent.transform.position, dir, Color.yellow);
                 return false;
             }
         }
         else
         {
+            //Debug.DrawRay(agent.transform.position, dir, Color.red);
             return false;
         }
     }
